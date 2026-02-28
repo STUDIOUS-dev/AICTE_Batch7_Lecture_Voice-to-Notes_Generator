@@ -38,8 +38,7 @@ IntelliLecture/
 │   └── package.json
 ├── data/                    # Auto-created: jobs JSON + uploaded audio
 ├── ffmpeg.exe               # Bundled FFmpeg binary (Windows)
-├── requirements.txt         # Python dependencies
-└── Presentation_Content.md  # PowerPoint slide content
+└── requirements.txt         # Python dependencies
 ```
 
 ---
