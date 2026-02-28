@@ -1,0 +1,44 @@
+# Environments
+venv/
+env/
+.env
+
+# Dependencies
+frontend/node_modules/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Binary files
+ffmpeg.exe
+
+# Build directories
+frontend/dist/
+build/
+dist/
+
+# Application Data
+data/jobs/
+data/uploads/
+*.wav
+*.mp3
+*.pdf
+
+# Webstorm / VSCode
+.idea/
+.vscode/
+
+# Temp files
+*.log
+test_pipeline.py
+test_nlp.py
+trigger.py
+trigger_process.py
+integration_test.py
+integration_test_2.py
+print_times.py
+upload_test.py
+test_asr.py

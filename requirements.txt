@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+python-multipart
+openai-whisper
+transformers==4.40.0
+torch
+torchvision
+torchaudio
+sentence-transformers
+keybert
+jiwer
+rouge-score
+reportlab
+pandas
+numpy<2.0
+Pillow
