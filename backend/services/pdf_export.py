@@ -261,7 +261,9 @@ class PDFExportService:
         # ── Full Transcript ────────────────────────────────
         story.append(PageBreak())
         story.append(Paragraph("7. Full Transcript", styles["SectionHeader"]))
-        transcript = lecture_data.get("transcript", "")
+        transcript = lecture_data.get("cleaned_text", "")
+        if not transcript and isinstance(lecture_data.get("transcript"), dict):
+            transcript = lecture_data["transcript"].get("text", "")
         # Break into paragraphs of ~500 chars to avoid ReportLab overflow
         for chunk_start in range(0, len(transcript), 500):
             story.append(Paragraph(transcript[chunk_start:chunk_start + 500], styles["BodyText2"]))

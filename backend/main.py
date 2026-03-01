@@ -122,19 +122,17 @@ def process_lecture(job_id: str, file_path: str, filename: str):
         cleaned = nlp.clean_text(raw_text)
         job["cleaned_text"] = cleaned
 
-        # --- TEMPORARILY DISABLED ---
-        # # Step 3: Keywords
-        # logger.info(f"[{job_id}] Step 3: Keywords")
-        # job["step"] = "Extracting keywords"
-        # save_job(job_id, job)
-        # job["keywords"] = nlp.extract_keywords(cleaned, top_n=10)
+        # Step 3: Keywords
+        logger.info(f"[{job_id}] Step 3: Keywords")
+        job["step"] = "Extracting keywords"
+        save_job(job_id, job)
+        job["keywords"] = nlp.extract_keywords(cleaned, top_n=10)
 
-        # # Step 4: Segmentation
-        # logger.info(f"[{job_id}] Step 4: Segmentation")
-        # job["step"] = "Segmenting topics"
-        # save_job(job_id, job)
-        # job["segments"] = nlp.segment_by_topic(cleaned)
-        # ----------------------------
+        # Step 4: Segmentation
+        logger.info(f"[{job_id}] Step 4: Segmentation")
+        job["step"] = "Segmenting topics"
+        save_job(job_id, job)
+        job["segments"] = nlp.segment_by_topic(cleaned)
 
         # Step 5: Summarization
         logger.info(f"[{job_id}] Step 5: Summarization")
@@ -143,25 +141,23 @@ def process_lecture(job_id: str, file_path: str, filename: str):
         summary = get_summarizer().summarize(cleaned)
         job["summary"] = summary
 
-        # --- TEMPORARILY DISABLED ---
-        # # Step 6: Quiz and Flashcards
-        # logger.info(f"[{job_id}] Step 6: Quiz + Flashcards")
-        # job["step"] = "Generating quiz and flashcards"
-        # save_job(job_id, job)
-        # quiz_svc = get_quiz()
-        # job["quiz"] = quiz_svc.generate_quiz(cleaned)
-        # job["flashcards"] = quiz_svc.generate_flashcards(cleaned)
+        # Step 6: Quiz and Flashcards
+        logger.info(f"[{job_id}] Step 6: Quiz + Flashcards")
+        job["step"] = "Generating quiz and flashcards"
+        save_job(job_id, job)
+        quiz_svc = get_quiz()
+        job["quiz"] = quiz_svc.generate_quiz(cleaned)
+        job["flashcards"] = quiz_svc.generate_flashcards(cleaned)
 
-        # # Step 7: Metrics
-        # logger.info(f"[{job_id}] Step 7: Metrics")
-        # job["step"] = "Calculating metrics"
-        # save_job(job_id, job)
-        # summary_text = " ".join(summary.get("key_points", []))
-        # job["metrics"] = get_evaluator().calculate_metrics(
-        #     transcript=cleaned,
-        #     summary=summary_text,
-        # )
-        # ----------------------------
+        # Step 7: Metrics
+        logger.info(f"[{job_id}] Step 7: Metrics")
+        job["step"] = "Calculating metrics"
+        save_job(job_id, job)
+        summary_text = " ".join(summary.get("key_points", []))
+        job["metrics"] = get_evaluator().calculate_metrics(
+            transcript=cleaned,
+            summary=summary_text,
+        )
 
         job["status"] = "done"
         job["step"] = "Complete"
@@ -216,19 +212,17 @@ async def get_results(job_id: str):
         raise HTTPException(status_code=400, detail="Job not yet complete")
     return job
 
-# --- TEMPORARILY DISABLED ---
-# @app.get("/api/export/{job_id}")
-# async def export_pdf(job_id: str):
-#     job = load_job(job_id)
-#     if job.get("status") != "done":
-#         raise HTTPException(status_code=400, detail="Job not yet complete")
-#         
-#     pdf_bytes = get_pdf().generate(job)
-#     filename = job.get("filename", "lecture").rsplit(".", 1)[0] + "_notes.pdf"
-#     
-#     return Response(
-#         content=pdf_bytes,
-#         media_type="application/pdf",
-#         headers={"Content-Disposition": f'attachment; filename="{filename}"'}
-#     )
-# ----------------------------
+@app.get("/api/export/{job_id}")
+async def export_pdf(job_id: str):
+    job = load_job(job_id)
+    if job.get("status") != "done":
+        raise HTTPException(status_code=400, detail="Job not yet complete")
+        
+    pdf_bytes = get_pdf().generate(job)
+    filename = job.get("filename", "lecture").rsplit(".", 1)[0] + "_notes.pdf"
+    
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )

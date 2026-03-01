@@ -231,11 +231,9 @@ function App() {
               <div className="dashboard-title">
                 <h2>{results.filename}</h2>
                 <div className="dashboard-actions">
-                  {/* --- TEMPORARILY DISABLED ---
                   <button className="btn-outline" onClick={downloadPDF}>
                     <Download size={15} /> Export PDF
                   </button>
-                  ---------------------------- */}
                   <button className="btn-secondary" onClick={resetState}>
                     New Upload
                   </button>
@@ -246,12 +244,10 @@ function App() {
                 {[
                   { id: 'transcript', label: 'Transcript', icon: <FileText size={15} /> },
                   { id: 'summary', label: 'Summary', icon: <List size={15} /> },
-                  // --- TEMPORARILY DISABLED ---
-                  // { id: 'keywords', label: 'Keywords', icon: <Key size={15} /> },
-                  // { id: 'quiz', label: 'Quiz', icon: <HelpCircle size={15} /> },
-                  // { id: 'flashcards', label: 'Flashcards', icon: <Layers size={15} /> },
-                  // { id: 'metrics', label: 'Metrics', icon: <BarChart size={15} /> },
-                  // ----------------------------
+                  { id: 'keywords', label: 'Keywords', icon: <Key size={15} /> },
+                  { id: 'quiz', label: 'Quiz', icon: <HelpCircle size={15} /> },
+                  { id: 'flashcards', label: 'Flashcards', icon: <Layers size={15} /> },
+                  { id: 'metrics', label: 'Metrics', icon: <BarChart size={15} /> },
                 ].map((t) => (
                   <button
                     key={t.id}
@@ -291,14 +287,13 @@ function App() {
                 </div>
               )}
 
-              {/* --- TEMPORARILY DISABLED --- */}
-              {/* {activeTab === 'keywords' && (
+              {activeTab === 'keywords' && (
                 <div className="content-card">
                   <h3>Top Keyphrases</h3>
                   <div className="tags-container">
                     {results.keywords && results.keywords.length > 0 ? (
                       results.keywords.map((kw, idx) => (
-                        <span className="tag" key={idx}>{kw[0]}</span>
+                        <span className="tag" key={idx}>{kw}</span>
                       ))
                     ) : (
                       <p>No keywords extracted.</p>
@@ -310,7 +305,7 @@ function App() {
                     <div className="timeline">
                       {results.segments.map((seg, idx) => (
                         <div className="timeline-item" key={idx}>
-                          <p>{seg}</p>
+                          <p><strong>{seg.title}</strong>: {seg.content}</p>
                         </div>
                       ))}
                     </div>
@@ -318,38 +313,65 @@ function App() {
                     <p>No topic segments identified.</p>
                   )}
                 </div>
-              )} */}
+              )}
 
-              {/* {activeTab === 'quiz' && (
+              {activeTab === 'quiz' && (
                 <div className="content-card">
                   <h3>Generated Quiz</h3>
-                  {results.quiz ? (
-                    <div className="pre-formatted">{results.quiz}</div>
+                  {results.quiz && results.quiz.mcqs && results.quiz.mcqs.length > 0 ? (
+                    <div>
+                      <h4 style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>Multiple Choice</h4>
+                      <div className="timeline">
+                        {results.quiz.mcqs.map((q, idx) => (
+                          <div className="timeline-item" key={idx}>
+                            <p><strong>Q:</strong> {q.question}</p>
+                            <span className="tag" style={{ fontSize: '0.7rem' }}>{q.difficulty}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <h4 style={{ marginTop: '2rem', marginBottom: '0.5rem' }}>Short Answer</h4>
+                      <div className="timeline">
+                        {results.quiz.short_answers?.map((q, idx) => (
+                          <div className="timeline-item" key={idx}>
+                            <p><strong>Q:</strong> {q.question}</p>
+                            <span className="tag" style={{ fontSize: '0.7rem' }}>{q.difficulty}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   ) : (
                     <p>No quiz generated.</p>
                   )}
                 </div>
-              )} */}
+              )}
 
-              {/* {activeTab === 'flashcards' && (
+              {activeTab === 'flashcards' && (
                 <div className="content-card">
                   <h3>Flashcards</h3>
-                  {results.flashcards ? (
-                    <div className="pre-formatted">{results.flashcards}</div>
+                  {results.flashcards && results.flashcards.length > 0 ? (
+                    <div className="timeline">
+                      {results.flashcards.map((fc, idx) => (
+                        <div className="timeline-item" key={idx}>
+                          <p><strong>Q:</strong> {fc.question}</p>
+                          <p style={{ color: 'var(--text-primary)' }}><strong>A:</strong> {fc.answer}</p>
+                        </div>
+                      ))}
+                    </div>
                   ) : (
                     <p>No flashcards generated.</p>
                   )}
                 </div>
-              )} */}
+              )}
 
-              {/* {activeTab === 'metrics' && (
+              {activeTab === 'metrics' && (
                 <div className="content-card">
                   <h3>Evaluation Metrics</h3>
                   <div className="metrics-grid">
                     <div className="metric-box">
                       <span className="metric-label">Word Error Rate (WER)</span>
                       <span className="metric-value">
-                        {results.metrics?.wer !== undefined
+                        {results.metrics?.wer !== undefined && results.metrics?.wer !== null
                           ? results.metrics.wer.toFixed(4)
                           : 'N/A'}
                       </span>
@@ -357,23 +379,22 @@ function App() {
                     <div className="metric-box">
                       <span className="metric-label">ROUGE-1-F</span>
                       <span className="metric-value">
-                        {results.metrics?.rouge1_f !== undefined
-                          ? results.metrics.rouge1_f.toFixed(4)
+                        {results.metrics?.rouge1 !== undefined && results.metrics?.rouge1 !== null
+                          ? results.metrics.rouge1.toFixed(4)
                           : 'N/A'}
                       </span>
                     </div>
                     <div className="metric-box">
                       <span className="metric-label">ROUGE-L-F</span>
                       <span className="metric-value">
-                        {results.metrics?.rougel_f !== undefined
-                          ? results.metrics.rougel_f.toFixed(4)
+                        {results.metrics?.rougeL !== undefined && results.metrics?.rougeL !== null
+                          ? results.metrics.rougeL.toFixed(4)
                           : 'N/A'}
                       </span>
                     </div>
                   </div>
                 </div>
-              )} */}
-              {/* ---------------------------- */}
+              )}
             </div>
           </div>
         )}
